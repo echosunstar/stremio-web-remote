@@ -1,0 +1,12 @@
+# Environment & secrets
+.env
+
+# Python / Virtual Environment
+venv/
+__pycache__/
+*.pyc
+
+# OS / Editor junk
+.DS_Store
+.vscode/
+.idea/
