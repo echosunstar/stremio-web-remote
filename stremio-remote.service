@@ -1,0 +1,21 @@
+[Unit]
+Description=Stremio Web Remote Control
+After=network.target graphical.target
+
+[Service]
+Type=simple
+User=YOUR_LINUX_USERNAME
+WorkingDirectory=/home/YOUR_LINUX_USERNAME/stremio-web-remote
+
+# Environment needed for xdotool to reach your desktop session
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/YOUR_LINUX_USERNAME/.Xauthority
+
+# Path to python inside your virtual environment
+ExecStart=/home/YOUR_LINUX_USERNAME/stremio-web-remote/venv/bin/python app.py
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=graphical.target
