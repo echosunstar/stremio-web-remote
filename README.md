@@ -9,7 +9,6 @@ No mobile app etc. installations required — just open the URL on your phone  :
   <img src="assets/remote-general.png" width="300" alt="General Remote Tab">
 </p>
 
-
 ---
 
 ## Features
@@ -45,7 +44,7 @@ sudo dnf install xdotool
 1. clone the repository
 
 ```bash
-git clone [https://github.com/YOUR_USERNAME/stremio-web-remote.git](https://github.com/YOUR_USERNAME/stremio-web-remote.git)
+git clone [https://github.com/echosunstar/stremio-web-remote.git](https://github.com/echosunstar/stremio-web-remote.git)
 cd stremio-web-remote
 ```
 
@@ -71,23 +70,31 @@ then configure it as you wish
 python app.py
 ```
 
-5. Run on Boot (systemd Service) (optional)
+5. that is it
 
-5.1 Identify your session's XAUTHORITY path and username by running in your desktop terminal:
+```bash
+http://<local ip>:8282 # unless you changed the port obviously
+```
 
-thsi will likely be `$HOME/.Xauthority` or `/run/user/<UID>/gdm/Xauthority`
+6. Run on Boot (systemd Service) (optional)
+
+6.1 Identify your session's XAUTHORITY path and username by running in your desktop terminal:
+
+this will likely be `$HOME/.Xauthority` or `/run/user/<UID>/gdm/Xauthority`
 
 ```bash
 echo $USER
 echo $XAUTHORITY
 ```
 
-5,2 Create the systemd config file and put this in there
+6.2 Create the systemd config file and put this in there
+
+create the file:
 
 ```bash
-sudo nano /etc/systemd/system/stremio-remote.service
+sudo vi /etc/systemd/system/stremio-remote.service
 ```
-this:
+put this and exit the editor:
 
 ```bash
 [Unit]
@@ -108,23 +115,23 @@ RestartSec=5
 WantedBy=graphical.target
 ```
 
-5.3 Enable and start the service:
+6.3 Enable and start the service:
 
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable --now stremio-remote.service
 ```
 
-5.4 check the logs that it all works:
+6.4 check the logs that it all works:
 
 ```bash
 journalctl -u stremio-remote.service -f
 ```
 
-5.5 enjoy
+6.5 also enjoy
 
 ```bash
-http://<local ip of yoru machine>:8282
+http://<local ip of your machine>:8282
 ```
 
 6. Project structure
