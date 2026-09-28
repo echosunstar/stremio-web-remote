@@ -21,10 +21,9 @@ No mobile app etc. installations required — just open the URL on your phone  :
 
 ---
 
----
 ## AI disclosure and line counts
 
-AI helped with the html and tidy up my python code and the systemd things
+AI helped with the html and tidy up my python code (89 lines) and the systemd things
 
 ```
 cloc app.py templates/index.html
@@ -62,7 +61,7 @@ sudo dnf install xdotool
 1. clone the repository
 
 ```bash
-git clone [https://github.com/echosunstar/stremio-web-remote.git](https://github.com/echosunstar/stremio-web-remote.git)
+git clone https://github.com/echosunstar/stremio-web-remote.git
 cd stremio-web-remote
 ```
 
