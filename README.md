@@ -134,7 +134,7 @@ journalctl -u stremio-remote.service -f
 http://<local ip of your machine>:8282
 ```
 
-6. Project structure
+7. Project structure
 
 ```
 stremio-web-remote/
@@ -146,6 +146,6 @@ stremio-web-remote/
 └── README.md
 ```
 
-7. security
+8. security notice
 
-You need to be on a trusted local network as this permits user input 
+You need to be on a trusted local network as this permits user input  (it is a remote)
