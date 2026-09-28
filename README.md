@@ -4,18 +4,21 @@ A lightweight remote designed to control **Stremio** and maybe your Linux deskto
 
 No mobile app etc. installations required — just open the URL on your phone  : `http://<local ip>:8282`
 
-![Stremio Remote View](assets/remote_stremio.png)
-![General Remote View](assets/remote_general.png)
+<p align="center">
+  <img src="assets/remote_stremio.png" width="300" alt="Stremio Remote Tab">
+  <img src="assets/remote_general.png" width="300" alt="General Remote Tab">
+</p>
+
 
 ---
 
 ## Features
 
-- ** Touch trackpad & mouse buttons:** adjustable sensitivity sliders and tap-to-click
-- ** Stremio-specific controls:** Dedicated media controls for playback, 10s/1m seeking, volume, full screen, next episode, restart, and bringing Stremio into focus
-- ** General desktop utility:** Navigation arrows, Enter, Backspace, Tab, display wake, and session screen lock
-- ** Environment configurable:** Custom host, port, display index (`:0`), and debug flags via `.env`.
-- ** Systemd config:** Includes background service configuration to automatically start on boot.
+- Touch trackpad & mouse buttons: adjustable sensitivity sliders and tap-to-click
+- Stremio-specific controls: Dedicated media controls for playback, 10s/1m seeking, volume, full screen, next episode, restart, and bringing Stremio into focus
+- General desktop utility: Navigation arrows, Enter, Backspace, Tab, display wake, and session screen lock
+- Environment configurable: Custom host, port, display index (`:0`), and debug flags via `.env`
+- Systemd config: Includes background service configuration to automatically start on boot
 
 ---
 
@@ -118,6 +121,11 @@ sudo systemctl enable --now stremio-remote.service
 journalctl -u stremio-remote.service -f
 ```
 
+5.5 enjoy
+
+```bash
+http://<local ip of yoru machine>:8282
+```
 
 6. Project structure
 
