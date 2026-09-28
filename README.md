@@ -21,6 +21,24 @@ No mobile app etc. installations required — just open the URL on your phone  :
 
 ---
 
+---
+## AI disclosure and line counts
+
+AI helped with the html and tidy up my python code and the systemd things
+
+```
+cloc app.py templates/index.html
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+HTML                             1             36              0            321
+Python                           1             33              5             89
+-------------------------------------------------------------------------------
+SUM:                             2             69              5            410
+-------------------------------------------------------------------------------
+```
+
+---
 ## Prerequisites
 
 - **OS:** Linux running an **X11** desktop session (*Wayland is NOT supported out of the box due to `xdotool` limitation*).
