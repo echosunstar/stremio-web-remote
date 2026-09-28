@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Stremio Web Remote</title>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            background: #111; 
+            color: #eee; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            margin: 0; 
+            padding: 12px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            user-select: none;
+        }
+
+        .tabs {
+            display: flex;
+            width: 100%;
+            max-width: 360px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 12px;
+            border: 1px solid #282828;
+        }
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            color: #888;
+            border: none;
+            padding: 10px 0;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .tab-btn.active {
+            background: #2b2b2b;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        
+        #trackpad {
+            width: 100%;
+            max-width: 360px;
+            height: 160px;
+            background: #1a1a1a;
+            border: 2px dashed #333;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+            touch-action: none;
+            margin-bottom: 8px;
+        }
+        #trackpad:active { border-color: #3b82f6; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 360px;
+            margin-bottom: 10px;
+            background: #181818;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #aaa;
+        }
+        .speed-control input[type=range] {
+            flex-grow: 1;
+            margin: 0 12px;
+            accent-color: #3b82f6;
+            cursor: pointer;
+        }
+
+        .grid-mouse {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            width: 100%;
+            max-width: 360px;
+            margin-bottom: 10px;
+        }
+
+        .tab-content {
+            width: 100%;
+            max-width: 360px;
+            display: none;
+        }
+        .tab-content.active { display: block; }
+        
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 8px; 
+            width: 100%; 
+            max-width: 360px; 
+        }
+        .span-2 { grid-column: span 2; }
+        .span-4 { grid-column: span 4; }
+        
+        button { 
+            background: #222; 
+            color: #fff; 
+            border: 1px solid #333; 
+            padding: 16px 4px; 
+            font-size: 14px; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            cursor: pointer; 
+        }
+        button:active { background: #3b82f6; border-color: #3b82f6; }
+        
+        .play-btn { background: #1d4ed8; border: none; font-size: 18px; padding: 18px 4px; }
+        .play-btn:active { background: #2563eb; }
+        .mouse-btn { padding: 12px; font-size: 14px; background: #181818; }
+        .secondary { background: #181818; color: #aaa; }
+        .utility { background: #1c1c1c; border-color: #2c2c2c; color: #93c5fd; }
+        
+        .typing-container {
+            width: 100%;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .input-row {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+        input[type="text"] {
+            flex-grow: 1;
+            background: #181818;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+        }
+        input:focus { border-color: #3b82f6; }
+        .clear-btn { background: #262626; color: #aaa; border: 1px solid #333; padding: 10px 14px; }
+        
+        .echo-badge {
+            background: #151515;
+            border: 1px solid #252525;
+            color: #10b981;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 13px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            min-height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .echo-status { color: #555; font-size: 11px; margin-left: 8px; }
+
+        .lock-btn { background: #7f1d1d; border-color: #991b1b; color: #fca5a5; }
+        .lock-btn:active { background: #991b1b; }
+    </style>
+</head>
+<body>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('stremio')">🎬 Stremio</button>
+        <button class="tab-btn" onclick="switchTab('general')">🖥 General</button>
+    </div>
+
+    <div id="trackpad">Touch Trackpad (Tap = Click)</div>
+
+    <div class="speed-control">
+        <span>Speed</span>
+        <input type="range" id="speedSlider" min="1" max="5" step="0.5" value="2.5">
+        <span id="speedVal">2.5x</span>
+    </div>
+
+    <div class="grid-mouse">
+        <button class="mouse-btn" onclick="send('click 1')">Left Click</button>
+        <button class="mouse-btn" onclick="send('click 3')">Right Click</button>
+    </div>
+
+    <div id="tab-stremio" class="tab-content active">
+        <div class="grid">
+            <button class="play-btn span-4" onclick="send('space')">⏯ Play / Pause</button>
+            <button onclick="send('long_back')">⏮ -1m</button>
+            <button onclick="send('Left')">⏪ -10s</button>
+            <button onclick="send('Right')">⏩ +10s</button>
+            <button onclick="send('long_forward')">⏭ +1m</button>
+            <button class="secondary" onclick="send('m')">🔇 Mute</button>
+            <button onclick="send('Down')">🔉 Vol -</button>
+            <button onclick="send('Up')">🔊 Vol +</button>
+            <button class="secondary" onclick="send('f')">⛶ Full</button>
+            <button class="secondary span-2" onclick="send('restart')">⏮ Start</button>
+            <button class="secondary span-2" onclick="send('next_episode')">⏭ Next Ep</button>
+            <button class="utility span-2" onclick="send('Escape')">🔙 Back (Esc)</button>
+            <button class="utility span-2" onclick="send('focus')">🖥 Focus Stremio</button>
+        </div>
+    </div>
+
+    <div id="tab-general" class="tab-content">
+        <div class="typing-container">
+            <div class="input-row">
+                <input type="text" id="liveInput" placeholder="Type here ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                <button class="clear-btn" onclick="clearLiveInput()">Clear</button>
+            </div>
+            <div class="echo-badge">
+                <span id="echoText">Ready</span>
+                <span id="echoStatus" class="echo-status">LIVE</span>
+            </div>
+        </div>
+
+        <div class="grid">
+            <button class="play-btn span-2" style="font-size: 15px; padding: 15px 4px;" onclick="send('Return')">↵ Enter</button>
+            <button class="secondary span-2" onclick="send('BackSpace')">⌫ Backspace</button>
+            <button class="secondary" onclick="send('Tab')">Tab</button>
+            <button class="secondary" onclick="send('Escape')">Esc</button>
+            <button class="secondary" onclick="send('Up')">▲</button>
+            <button class="lock-btn" onclick="send('lock')">🔒 Lock</button>
+            <button class="secondary" onclick="send('Left')">◀</button>
+            <button class="secondary" onclick="send('Down')">▼</button>
+            <button class="secondary" onclick="send('Right')">▶</button>
+            <button class="secondary" onclick="send('wake')">🔆 Wake</button>
+        </div>
+    </div>
+
+    <script>
+        function send(key) {
+            navigator.vibrate?.(30);
+            fetch('/key?k=' + encodeURIComponent(key));
+        }
+
+        const liveInput = document.getElementById('liveInput');
+        const echoText = document.getElementById('echoText');
+        const echoStatus = document.getElementById('echoStatus');
+        let prevVal = '';
+
+        liveInput.addEventListener('input', () => {
+            const currentVal = liveInput.value;
+
+            if (currentVal.length < prevVal.length) {
+                const diff = prevVal.length - currentVal.length;
+                fetch(`/key?k=BackSpace&repeat=${diff}`);
+                echoStatus.innerText = '⌫ ' + diff;
+            } else if (currentVal.startsWith(prevVal)) {
+                const added = currentVal.slice(prevVal.length);
+                fetch('/type', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: 'text=' + encodeURIComponent(added)
+                });
+                echoStatus.innerText = 'TYPING';
+            } else {
+                fetch(`/key?k=BackSpace&repeat=${prevVal.length}`).then(() => {
+                    fetch('/type', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        body: 'text=' + encodeURIComponent(currentVal)
+                    });
+                });
+                echoStatus.innerText = 'SYNCED';
+            }
+
+            echoText.innerText = currentVal ? currentVal : 'Ready';
+            prevVal = currentVal;
+        });
+
+        liveInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                send('Return');
+                clearLiveInput();
+                echoStatus.innerText = 'ENTER SENT';
+            }
+        });
+
+        function clearLiveInput() {
+            liveInput.value = '';
+            prevVal = '';
+            echoText.innerText = 'Ready';
+            echoStatus.innerText = 'CLEARED';
+        }
+
+        function switchTab(name) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            if (name === 'stremio') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('tab-stremio').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('tab-general').classList.add('active');
+            }
+            localStorage.setItem('activeRemoteTab', name);
+        }
+
+        const savedTab = localStorage.getItem('activeRemoteTab') || 'stremio';
+        switchTab(savedTab);
+
+        const slider = document.getElementById('speedSlider');
+        const speedVal = document.getElementById('speedVal');
+        let multiplier = parseFloat(localStorage.getItem('mouseSpeed') || '2.5');
+
+        slider.value = multiplier;
+        speedVal.innerText = multiplier + 'x';
+
+        slider.addEventListener('input', (e) => {
+            multiplier = parseFloat(e.target.value);
+            speedVal.innerText = multiplier + 'x';
+            localStorage.setItem('mouseSpeed', multiplier);
+        });
+
+        const pad = document.getElementById('trackpad');
+        let lastX = 0, lastY = 0, moved = false;
+
+        pad.addEventListener('touchstart', (e) => {
+            lastX = e.touches[0].clientX;
+            lastY = e.touches[0].clientY;
+            moved = false;
+        }, { passive: false });
+
+        pad.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rawDx = touch.clientX - lastX;
+            const rawDy = touch.clientY - lastY;
+
+            const dx = Math.round(rawDx * multiplier);
+            const dy = Math.round(rawDy * multiplier);
+
+            if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
+                moved = true;
+                lastX = touch.clientX;
+                lastY = touch.clientY;
+                fetch(`/mouse?dx=${dx}&dy=${dy}`);
+            }
+        }, { passive: false });
+
+        pad.addEventListener('touchend', () => {
+            if (!moved) send('click 1');
+        });
+    </script>
+</body>
+</html>
