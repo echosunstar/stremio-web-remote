@@ -5,8 +5,8 @@ A lightweight remote designed to control **Stremio** and maybe your Linux deskto
 No mobile app etc. installations required — just open the URL on your phone  : `http://<local ip>:8282`
 
 <p align="center">
-  <img src="assets/remote_stremio.png" width="300" alt="Stremio Remote Tab">
-  <img src="assets/remote_general.png" width="300" alt="General Remote Tab">
+  <img src="assets/remote-stremio.png" width="300" alt="Stremio Remote Tab">
+  <img src="assets/remote-general.png" width="300" alt="General Remote Tab">
 </p>
 
 
